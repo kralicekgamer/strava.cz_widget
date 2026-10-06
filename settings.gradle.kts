@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "StravaWidget"
+rootProject.name = "strava_cz_widget"
 include(":app")

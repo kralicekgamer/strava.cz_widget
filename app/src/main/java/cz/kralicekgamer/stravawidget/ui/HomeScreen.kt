@@ -67,7 +67,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private const val SOURCE_URL = "https://github.com/kralicekgamer/strava_widget"
+private const val SOURCE_URL = "https://github.com/kralicekgamer/strava.cz_widget"
 
 /** Delší odpověď by okno zpomalila; zkopírovat jde vždy celá. */
 private const val RAW_PREVIEW_CHARS = 6000
@@ -100,7 +100,7 @@ internal fun HomeScreen(store: CredentialStore, version: Int) {
     }
 
     Spacer(Modifier.height(24.dp))
-    Text("Strava widget", style = MaterialTheme.typography.headlineMedium)
+    Text("strava.cz_widget", style = MaterialTheme.typography.headlineMedium)
     Spacer(Modifier.height(4.dp))
     Text(
         "${store.username}, jídelna ${store.canteen}",
@@ -208,7 +208,7 @@ private fun DiagnosticsSection(store: CredentialStore, version: Int) {
             text = remember(entries) { AppLog.export(entries.asReversed()) },
             emptyText = "Zatím žádné záznamy.",
             onClose = { showLogs = false },
-            onCopy = { copy(context, "Logy Strava widgetu", exportLog(entries.asReversed())) },
+            onCopy = { copy(context, "Logy strava.cz_widget", exportLog(entries.asReversed())) },
             clearQuestion = "Smazat ${logCount(entries.size)}? Nepůjdou obnovit. Widget ani přihlášení se nezmění.",
             clearLabel = "Smazat logy",
             onClear = { AppLog.clear(context) },
@@ -456,7 +456,7 @@ private fun ConfirmDialog(
 }
 
 private fun exportLog(entries: List<LogEntry>): String =
-    "Strava widget ${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE}, ${BuildConfig.GIT_COMMIT}), " +
+    "strava.cz_widget ${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE}, ${BuildConfig.GIT_COMMIT}), " +
         "Android ${Build.VERSION.RELEASE}, ${Build.MANUFACTURER} ${Build.MODEL}\n" +
         AppLog.export(entries)
 
