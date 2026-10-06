@@ -2,7 +2,10 @@
 
 Widget na plochu Androidu pro [strava.cz](https://www.strava.cz). Ukáže všechno, co máš na dnešek objednané: snídani, polévku, oběd i večeři. Po 15:00 a o víkendu přepne na nejbližší další den.
 
-![Widget na ploše](screenshot.png)
+<p>
+  <img src="screenshots/widget.png" alt="Widget na ploše" width="300">
+  <img src="screenshots/aplikace.png" alt="Aplikace" width="300">
+</p>
 
 ## Instalace
 
