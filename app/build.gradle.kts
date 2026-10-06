@@ -26,8 +26,8 @@ android {
         applicationId = "cz.kralicekgamer.strava_cz_widget"
         minSdk = 26
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 5
+        versionName = "1.4"
 
         buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
         buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
