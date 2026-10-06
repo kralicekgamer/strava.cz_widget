@@ -102,7 +102,7 @@ object MenuRepository {
         notifyChanged(context)
     }
 
-    /** Překreslí widget bez stahování, např. když se po 15:00 přepíná na další den. */
+    /** Překreslí widget bez stahování, např. když se po 21:00 přepíná na další den. */
     suspend fun notifyChanged(context: Context) {
         _version.update { it + 1 }
         StravaWidget().updateAll(context)

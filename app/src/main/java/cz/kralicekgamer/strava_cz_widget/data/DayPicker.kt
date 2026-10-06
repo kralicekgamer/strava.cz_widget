@@ -8,9 +8,9 @@ import java.time.LocalTime
 
 object DayPicker {
     /** Od této hodiny už widget ukazuje další den. */
-    private val SWITCH_TIME: LocalTime = LocalTime.of(15, 0)
+    private val SWITCH_TIME: LocalTime = LocalTime.of(21, 0)
 
-    /** Dnešek do 15:00, jinak nejbližší další den, na který je vypsaný jídelníček. */
+    /** Dnešek do 21:00, jinak nejbližší další den, na který je vypsaný jídelníček. */
     fun pick(days: List<DayMenu>, now: LocalDateTime): DayMenu? {
         val today = now.toLocalDate()
         val from = if (now.toLocalTime() < SWITCH_TIME) today else today.plusDays(1)

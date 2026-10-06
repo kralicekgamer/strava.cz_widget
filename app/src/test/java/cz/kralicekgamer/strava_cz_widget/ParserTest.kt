@@ -94,11 +94,11 @@ class ParserTest {
     }
 
     @Test
-    fun `today is shown until three in the afternoon`() {
+    fun `today is shown until nine in the evening`() {
         val days = MenuParser.parse(v5)
 
-        assertEquals(LocalDate.of(2026, 10, 6), DayPicker.pick(days, LocalDateTime.of(2026, 10, 6, 14, 59))?.date)
-        assertEquals(LocalDate.of(2026, 10, 7), DayPicker.pick(days, LocalDateTime.of(2026, 10, 6, 15, 0))?.date)
+        assertEquals(LocalDate.of(2026, 10, 6), DayPicker.pick(days, LocalDateTime.of(2026, 10, 6, 20, 59))?.date)
+        assertEquals(LocalDate.of(2026, 10, 7), DayPicker.pick(days, LocalDateTime.of(2026, 10, 6, 21, 0))?.date)
     }
 
     @Test
@@ -106,7 +106,7 @@ class ParserTest {
         val days = MenuParser.parse(v5)
 
         assertEquals(LocalDate.of(2026, 10, 6), DayPicker.pick(days, LocalDateTime.of(2026, 10, 4, 10, 0))?.date)
-        assertNull(DayPicker.pick(days, LocalDateTime.of(2026, 10, 7, 16, 0)))
+        assertNull(DayPicker.pick(days, LocalDateTime.of(2026, 10, 7, 21, 30)))
     }
 
     @Test
