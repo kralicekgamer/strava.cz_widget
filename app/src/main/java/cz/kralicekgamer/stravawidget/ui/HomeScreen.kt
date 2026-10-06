@@ -11,7 +11,7 @@ import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -46,10 +47,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import cz.kralicekgamer.stravawidget.BuildConfig
 import cz.kralicekgamer.stravawidget.data.AppLog
 import cz.kralicekgamer.stravawidget.data.CredentialStore
@@ -65,10 +69,7 @@ import java.util.Locale
 
 private const val SOURCE_URL = "https://github.com/kralicekgamer/strava_widget"
 
-/** Kolik posledních záznamů logu je vidět bez rozbalení. */
-private const val LOG_PREVIEW = 8
-
-/** Delší odpověď by obrazovku zpomalila; zkopírovat jde vždy celá. */
+/** Delší odpověď by okno zpomalila; zkopírovat jde vždy celá. */
 private const val RAW_PREVIEW_CHARS = 6000
 
 @Composable
@@ -108,7 +109,7 @@ internal fun HomeScreen(store: CredentialStore, version: Int) {
     )
 
     WidgetSection(store, version, busy, onRefresh = { refresh("ručně") })
-    LogSection(store, version, onRefresh = { refresh("ručně") })
+    DiagnosticsSection(store, version)
     AboutSection()
 
     Spacer(Modifier.height(24.dp))
@@ -185,123 +186,148 @@ private fun WidgetSection(store: CredentialStore, version: Int, busy: Boolean, o
 }
 
 @Composable
-private fun LogSection(store: CredentialStore, version: Int, onRefresh: () -> Unit) {
+private fun DiagnosticsSection(store: CredentialStore, version: Int) {
     val context = LocalContext.current.applicationContext
     val entries by AppLog.entries.collectAsState()
-    val newestFirst = remember(entries) { entries.asReversed() }
     val rawJson = remember(version) { store.menuJson }
-    var showAll by remember { mutableStateOf(false) }
+    var showLogs by remember { mutableStateOf(false) }
     var showRaw by remember { mutableStateOf(false) }
-    var confirmClear by remember { mutableStateOf(false) }
 
-    Section(
-        title = "Logy",
-        actions = {
-            if (entries.isNotEmpty()) {
-                TextButton(onClick = { copy(context, "Logy Strava widgetu", exportLog(entries)) }) { Text("Zkopírovat") }
-                TextButton(onClick = { confirmClear = true }) { Text("Smazat") }
-            }
-        },
-    ) {
-        if (entries.isEmpty()) {
-            Column(Modifier.padding(16.dp)) {
-                Text("Zatím žádné záznamy", style = MaterialTheme.typography.bodyLarge)
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    "Objeví se tu každé obnovení jídelníčku, přihlášení a případné chyby.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                TextButton(onClick = onRefresh, contentPadding = ButtonDefaults.TextButtonWithIconContentPadding) {
-                    Text("Obnovit jídelníček")
-                }
-            }
-        } else {
-            val shown = if (showAll) newestFirst else newestFirst.take(LOG_PREVIEW)
-            shown.forEachIndexed { index, entry ->
-                if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                LogRow(entry)
-            }
-            if (entries.size > LOG_PREVIEW) {
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                ActionRow(if (showAll) "Zobrazit jen poslední" else "Zobrazit všech ${entries.size} záznamů") {
-                    showAll = !showAll
-                }
-            }
-        }
-
+    Section("Diagnostika") {
+        ActionRow("Otevřít logy", value = logCount(entries.size)) { showLogs = true }
         if (rawJson != null) {
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ActionRow(if (showRaw) "Skrýt poslední odpověď Stravy" else "Zobrazit poslední odpověď Stravy") {
-                showRaw = !showRaw
-            }
-            if (showRaw) RawResponse(rawJson)
+            ActionRow("Otevřít odpověď Stravy") { showRaw = true }
         }
     }
 
-    if (confirmClear) {
-        ConfirmDialog(
-            title = "Smazat ${entries.size} záznamů logu?",
-            text = "Záznamy nepůjdou obnovit. Widget ani přihlášení se nezmění.",
-            confirm = "Smazat logy",
-            dismiss = "Ponechat",
-            onConfirm = {
-                confirmClear = false
-                AppLog.clear(context)
+    if (showLogs) {
+        TextWindow(
+            title = "Logy",
+            // Nejnovější nahoře.
+            text = remember(entries) { AppLog.export(entries.asReversed()) },
+            emptyText = "Zatím žádné záznamy.",
+            onClose = { showLogs = false },
+            onCopy = { copy(context, "Logy Strava widgetu", exportLog(entries.asReversed())) },
+            clearQuestion = "Smazat ${logCount(entries.size)}? Nepůjdou obnovit. Widget ani přihlášení se nezmění.",
+            clearLabel = "Smazat logy",
+            onClear = { AppLog.clear(context) },
+        )
+    }
+
+    if (showRaw && rawJson != null) {
+        val pretty = remember(rawJson) { prettyJson(rawJson) }
+        val preview = remember(pretty) { pretty.take(RAW_PREVIEW_CHARS) }
+        TextWindow(
+            title = "Odpověď Stravy",
+            text = preview,
+            note = if (pretty.length > preview.length) {
+                "Vidíš prvních ${preview.length} z ${pretty.length} znaků. Zkopíruje se celá odpověď."
+            } else {
+                null
             },
-            onDismiss = { confirmClear = false },
+            onClose = { showRaw = false },
+            onCopy = { copy(context, "Odpověď Stravy", pretty) },
         )
     }
 }
 
-@Composable
-private fun LogRow(entry: LogEntry) {
-    Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-        Text(
-            AppLog.formatTime(entry.time),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(80.dp).alignByBaseline(),
-        )
-        Text(
-            entry.text,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f).alignByBaseline(),
-        )
-    }
+private fun logCount(count: Int): String = when (count) {
+    1 -> "1 záznam"
+    2, 3, 4 -> "$count záznamy"
+    else -> "$count záznamů"
 }
 
+/**
+ * Okno s obyčejným posuvným textem (logy, odpověď Stravy). Smazání se potvrzuje ve stejném okně,
+ * aby se neotvíralo okno přes okno.
+ */
 @Composable
-private fun RawResponse(json: String) {
-    val context = LocalContext.current.applicationContext
-    val pretty = remember(json) { prettyJson(json) }
-    val preview = remember(pretty) { pretty.take(RAW_PREVIEW_CHARS) }
+private fun TextWindow(
+    title: String,
+    text: String,
+    onClose: () -> Unit,
+    onCopy: () -> Unit,
+    emptyText: String = "",
+    note: String? = null,
+    clearQuestion: String = "",
+    clearLabel: String = "",
+    onClear: (() -> Unit)? = null,
+) {
+    var confirmingClear by remember { mutableStateOf(false) }
+    val maxHeight = (LocalConfiguration.current.screenHeightDp * 0.8f).dp
 
-    Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 280.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
-                .verticalScroll(rememberScrollState())
-                .horizontalScroll(rememberScrollState())
-                .padding(12.dp),
+    Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().heightIn(max = maxHeight),
         ) {
-            Text(preview, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
-        }
-        Spacer(Modifier.height(8.dp))
-        if (pretty.length > preview.length) {
-            Text(
-                "Vidíš prvních ${preview.length} z ${pretty.length} znaků. Zkopíruje se celá odpověď.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        TextButton(
-            onClick = { copy(context, "Odpověď Stravy", pretty) },
-            contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
-        ) {
-            Text("Zkopírovat odpověď")
+            Column(Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)) {
+                Text(title, style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.height(12.dp))
+
+                if (confirmingClear) {
+                    Text(clearQuestion, style = MaterialTheme.typography.bodyLarge)
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                        TextButton(onClick = { confirmingClear = false }) { Text("Ponechat") }
+                        TextButton(
+                            onClick = {
+                                confirmingClear = false
+                                onClear?.invoke()
+                            },
+                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                        ) {
+                            Text(clearLabel)
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
+                            .verticalScroll(rememberScrollState())
+                            .padding(12.dp),
+                    ) {
+                        if (text.isEmpty()) {
+                            Text(
+                                emptyText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        } else {
+                            SelectionContainer {
+                                Text(text, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
+                            }
+                        }
+                    }
+                    if (note != null) {
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            note,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        if (onClear != null && text.isNotEmpty()) {
+                            TextButton(
+                                onClick = { confirmingClear = true },
+                                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                            ) {
+                                Text("Smazat")
+                            }
+                        }
+                        Spacer(Modifier.weight(1f))
+                        if (text.isNotEmpty()) TextButton(onClick = onCopy) { Text("Zkopírovat") }
+                        TextButton(onClick = onClose) { Text("Zavřít") }
+                    }
+                }
+            }
         }
     }
 }
@@ -378,16 +404,28 @@ private fun InfoRow(label: String, value: String) {
 
 /** Řádek, na který se dá klepnout; barva akcentu ho odliší od řádků s údaji. */
 @Composable
-private fun ActionRow(label: String, onClick: () -> Unit) {
-    Text(
-        label,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
+private fun ActionRow(label: String, value: String? = null, onClick: () -> Unit) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
-    )
+    ) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.weight(1f).alignByBaseline(),
+        )
+        if (value != null) {
+            Text(
+                value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.alignByBaseline(),
+            )
+        }
+    }
 }
 
 @Composable
