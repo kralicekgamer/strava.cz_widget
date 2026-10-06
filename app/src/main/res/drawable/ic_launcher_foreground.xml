@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miska polévky se dvěma proužky páry, uvnitř bezpečné zóny adaptivní ikony. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,56 L76,56 A22,22 0 0 1 32,56 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,50 L78,50 L78,53 L30,53 Z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M47,44 C44,40 50,38 47,33 M61,44 C58,40 64,38 61,33" />
+</vector>

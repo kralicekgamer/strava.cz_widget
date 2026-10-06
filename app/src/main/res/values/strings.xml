@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Strava widget</string>
+    <string name="widget_name">Strava: dnešní jídla</string>
+    <string name="widget_description">Všechno, co máš na dnešek objednané: snídaně, polévka, oběd i večeře.</string>
+</resources>
