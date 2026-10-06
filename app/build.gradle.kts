@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -8,6 +10,13 @@ val gitCommit: String = providers.exec {
     commandLine("git", "rev-parse", "--short", "HEAD")
     isIgnoreExitValue = true
 }.standardOutput.asText.map { it.trim().ifEmpty { "neznámý" } }.getOrElse("neznámý")
+
+// Podpisový klíč pro vydání. Soubor keystore.properties není v gitu; bez něj jde sestavit jen debug.
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) file.inputStream().use(::load)
+}
+val hasReleaseKey = !keystoreProperties.getProperty("storePassword").isNullOrEmpty()
 
 android {
     namespace = "cz.kralicekgamer.strava_cz_widget"
@@ -24,9 +33,21 @@ android {
         buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseKey) {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (hasReleaseKey) signingConfig = signingConfigs.getByName("release")
         }
     }
 
