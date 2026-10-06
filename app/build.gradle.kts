@@ -3,6 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Krátký hash commitu, ze kterého se sestavuje; mimo git repozitář „neznámý“.
+val gitCommit: String = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { it.trim().ifEmpty { "neznámý" } }.getOrElse("neznámý")
+
 android {
     namespace = "cz.kralicekgamer.stravawidget"
     compileSdk = 37
@@ -11,8 +17,11 @@ android {
         applicationId = "cz.kralicekgamer.stravawidget"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
+
+        buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
+        buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
     }
 
     buildTypes {
@@ -28,6 +37,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

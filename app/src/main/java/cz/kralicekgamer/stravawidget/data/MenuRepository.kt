@@ -53,10 +53,11 @@ object MenuRepository {
                 store.username = username
                 store.password = password
                 store.session = session
-                fetch(store, session)
+                AppLog.add(context, "Přihlášen uživatel $username, jídelna $canteen")
+                fetch(context, store, session, "po přihlášení")
                 null
             } catch (e: Exception) {
-                describe(e)
+                describe(e).also { AppLog.add(context, "Chyba při přihlášení: ${it.details}") }
             }
         }
         if (store.isLoggedIn) {
@@ -67,8 +68,11 @@ object MenuRepository {
         return failure.takeUnless { store.isLoggedIn }
     }
 
-    /** Stáhne jídelníček; když session vypršela, jednou se znovu přihlásí. */
-    suspend fun refresh(context: Context): Failure? {
+    /**
+     * Stáhne jídelníček; když session vypršela, jednou se znovu přihlásí.
+     * [source] říká do logu, kdo obnovení spustil (ručně, na pozadí…).
+     */
+    suspend fun refresh(context: Context, source: String): Failure? {
         val store = CredentialStore(context)
         if (!store.isLoggedIn) return null
 
@@ -76,14 +80,15 @@ object MenuRepository {
             try {
                 val session = store.session
                 try {
-                    fetch(store, session ?: relogin(store))
+                    fetch(context, store, session ?: relogin(context, store), source)
                 } catch (e: StravaException) {
                     if (session == null) throw e
-                    fetch(store, relogin(store))
+                    AppLog.add(context, "Strava odmítla uložené přihlášení (#${e.number}), přihlašuji znovu")
+                    fetch(context, store, relogin(context, store), source)
                 }
                 null
             } catch (e: Exception) {
-                describe(e)
+                describe(e).also { AppLog.add(context, "Obnovení $source selhalo: ${it.details}") }
             }
         }
         failure?.let(store::saveError)
@@ -93,6 +98,7 @@ object MenuRepository {
 
     suspend fun logout(context: Context) {
         CredentialStore(context).logout()
+        AppLog.add(context, "Odhlášeno")
         notifyChanged(context)
     }
 
@@ -125,15 +131,27 @@ object MenuRepository {
         )
     }
 
-    private fun relogin(store: CredentialStore): Session {
+    private fun relogin(context: Context, store: CredentialStore): Session {
         val password = store.password ?: throw StravaException(StravaException.CHYBNE_HESLO, "Uložené heslo nejde přečíst.")
-        return StravaClient.login(store.canteen, store.username, password).also { store.session = it }
+        return StravaClient.login(store.canteen, store.username, password).also {
+            store.session = it
+            AppLog.add(context, "Přihlášení obnoveno")
+        }
     }
 
-    private fun fetch(store: CredentialStore, session: Session) {
+    private fun fetch(context: Context, store: CredentialStore, session: Session, source: String) {
         val (json, updated) = StravaClient.orders(store.canteen, session)
         store.session = updated
         store.saveMenu(json)
+
+        val days = try {
+            MenuParser.parse(json)
+        } catch (e: Exception) {
+            AppLog.add(context, "Jídelníček stažen $source, ale nejde přečíst: ${e.message}")
+            return
+        }
+        val ordered = days.sumOf { it.ordered.size }
+        AppLog.add(context, "Jídelníček obnoven $source: ${days.size} dnů, ${days.sumOf { it.meals.size }} jídel, $ordered objednáno")
     }
 
     private fun describe(e: Exception): Failure {

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.StravaWidget" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.StravaWidget" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/canvas</item>
+    </style>
     <color name="ic_launcher_background">#1F6F5C</color>
+    <!-- Stejná barva jako pozadí v ui/Theme.kt, ať při startu neproblikne jiná. -->
+    <color name="canvas">#F3F6F4</color>
 </resources>

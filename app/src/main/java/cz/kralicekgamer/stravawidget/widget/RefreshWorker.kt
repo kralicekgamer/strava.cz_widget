@@ -14,7 +14,7 @@ class RefreshWorker(context: Context, params: WorkerParameters) : CoroutineWorke
 
     override suspend fun doWork(): Result {
         // Bez připojení zůstanou poslední data; refresh widget i tak překreslí (přepnutí na další den).
-        MenuRepository.refresh(applicationContext)
+        MenuRepository.refresh(applicationContext, "na pozadí")
         return Result.success()
     }
 
