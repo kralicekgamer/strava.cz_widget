@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.ui
+package cz.kralicekgamer.strava_cz_widget.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

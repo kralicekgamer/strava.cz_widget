@@ -1,6 +1,6 @@
-package cz.kralicekgamer.stravawidget.data
+package cz.kralicekgamer.strava_cz_widget.data
 
-import cz.kralicekgamer.stravawidget.api.DayMenu
+import cz.kralicekgamer.strava_cz_widget.api.DayMenu
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -1,10 +1,10 @@
-package cz.kralicekgamer.stravawidget.data
+package cz.kralicekgamer.strava_cz_widget.data
 
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import cz.kralicekgamer.stravawidget.api.Session
+import cz.kralicekgamer.strava_cz_widget.api.Session
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator

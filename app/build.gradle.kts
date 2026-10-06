@@ -10,11 +10,11 @@ val gitCommit: String = providers.exec {
 }.standardOutput.asText.map { it.trim().ifEmpty { "neznámý" } }.getOrElse("neznámý")
 
 android {
-    namespace = "cz.kralicekgamer.stravawidget"
+    namespace = "cz.kralicekgamer.strava_cz_widget"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "cz.kralicekgamer.stravawidget"
+        applicationId = "cz.kralicekgamer.strava_cz_widget"
         minSdk = 26
         targetSdk = 37
         versionCode = 4

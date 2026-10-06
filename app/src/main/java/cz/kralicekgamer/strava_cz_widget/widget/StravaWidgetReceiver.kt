@@ -1,9 +1,9 @@
-package cz.kralicekgamer.stravawidget.widget
+package cz.kralicekgamer.strava_cz_widget.widget
 
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import cz.kralicekgamer.stravawidget.data.AppLog
+import cz.kralicekgamer.strava_cz_widget.data.AppLog
 
 class StravaWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = StravaWidget()

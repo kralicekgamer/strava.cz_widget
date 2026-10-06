@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.ui
+package cz.kralicekgamer.strava_cz_widget.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -28,8 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import cz.kralicekgamer.stravawidget.data.CredentialStore
-import cz.kralicekgamer.stravawidget.data.MenuRepository
+import cz.kralicekgamer.strava_cz_widget.data.CredentialStore
+import cz.kralicekgamer.strava_cz_widget.data.MenuRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

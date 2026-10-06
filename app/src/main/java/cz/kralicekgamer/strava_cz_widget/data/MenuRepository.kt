@@ -1,13 +1,13 @@
-package cz.kralicekgamer.stravawidget.data
+package cz.kralicekgamer.strava_cz_widget.data
 
 import android.content.Context
 import androidx.glance.appwidget.updateAll
-import cz.kralicekgamer.stravawidget.api.Meal
-import cz.kralicekgamer.stravawidget.api.MenuParser
-import cz.kralicekgamer.stravawidget.api.Session
-import cz.kralicekgamer.stravawidget.api.StravaClient
-import cz.kralicekgamer.stravawidget.api.StravaException
-import cz.kralicekgamer.stravawidget.widget.StravaWidget
+import cz.kralicekgamer.strava_cz_widget.api.Meal
+import cz.kralicekgamer.strava_cz_widget.api.MenuParser
+import cz.kralicekgamer.strava_cz_widget.api.Session
+import cz.kralicekgamer.strava_cz_widget.api.StravaClient
+import cz.kralicekgamer.strava_cz_widget.api.StravaException
+import cz.kralicekgamer.strava_cz_widget.widget.StravaWidget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

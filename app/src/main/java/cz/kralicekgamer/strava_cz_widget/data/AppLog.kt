@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.data
+package cz.kralicekgamer.strava_cz_widget.data
 
 import android.content.Context
 import kotlinx.coroutines.flow.MutableStateFlow

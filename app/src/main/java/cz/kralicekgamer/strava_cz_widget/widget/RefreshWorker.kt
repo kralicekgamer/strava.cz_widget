@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.widget
+package cz.kralicekgamer.strava_cz_widget.widget
 
 import android.content.Context
 import androidx.work.CoroutineWorker
@@ -6,7 +6,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import cz.kralicekgamer.stravawidget.data.MenuRepository
+import cz.kralicekgamer.strava_cz_widget.data.MenuRepository
 import java.util.concurrent.TimeUnit
 
 /** Zhruba každou hodinu stáhne jídelníček a překreslí widget. */

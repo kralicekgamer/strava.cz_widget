@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.ui
+package cz.kralicekgamer.strava_cz_widget.ui
 
 import android.appwidget.AppWidgetManager
 import android.content.ClipData
@@ -54,13 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import cz.kralicekgamer.stravawidget.BuildConfig
-import cz.kralicekgamer.stravawidget.data.AppLog
-import cz.kralicekgamer.stravawidget.data.CredentialStore
-import cz.kralicekgamer.stravawidget.data.LogEntry
-import cz.kralicekgamer.stravawidget.data.MenuRepository
-import cz.kralicekgamer.stravawidget.widget.RefreshWorker
-import cz.kralicekgamer.stravawidget.widget.StravaWidgetReceiver
+import cz.kralicekgamer.strava_cz_widget.BuildConfig
+import cz.kralicekgamer.strava_cz_widget.data.AppLog
+import cz.kralicekgamer.strava_cz_widget.data.CredentialStore
+import cz.kralicekgamer.strava_cz_widget.data.LogEntry
+import cz.kralicekgamer.strava_cz_widget.data.MenuRepository
+import cz.kralicekgamer.strava_cz_widget.widget.RefreshWorker
+import cz.kralicekgamer.strava_cz_widget.widget.StravaWidgetReceiver
 import kotlinx.coroutines.launch
 import org.json.JSONTokener
 import java.text.SimpleDateFormat

@@ -1,7 +1,7 @@
-package cz.kralicekgamer.stravawidget
+package cz.kralicekgamer.strava_cz_widget
 
-import cz.kralicekgamer.stravawidget.data.AppLog
-import cz.kralicekgamer.stravawidget.data.LogEntry
+import cz.kralicekgamer.strava_cz_widget.data.AppLog
+import cz.kralicekgamer.strava_cz_widget.data.LogEntry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

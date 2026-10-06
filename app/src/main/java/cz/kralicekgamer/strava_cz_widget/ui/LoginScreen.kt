@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.ui
+package cz.kralicekgamer.strava_cz_widget.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -31,10 +31,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import cz.kralicekgamer.stravawidget.data.CredentialStore
-import cz.kralicekgamer.stravawidget.data.Failure
-import cz.kralicekgamer.stravawidget.data.MenuRepository
-import cz.kralicekgamer.stravawidget.widget.RefreshWorker
+import cz.kralicekgamer.strava_cz_widget.data.CredentialStore
+import cz.kralicekgamer.strava_cz_widget.data.Failure
+import cz.kralicekgamer.strava_cz_widget.data.MenuRepository
+import cz.kralicekgamer.strava_cz_widget.widget.RefreshWorker
 import kotlinx.coroutines.launch
 
 @Composable

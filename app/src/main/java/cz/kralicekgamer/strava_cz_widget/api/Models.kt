@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.api
+package cz.kralicekgamer.strava_cz_widget.api
 
 import org.json.JSONArray
 import org.json.JSONObject

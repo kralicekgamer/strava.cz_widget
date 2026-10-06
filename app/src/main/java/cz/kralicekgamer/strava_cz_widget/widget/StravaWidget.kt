@@ -1,4 +1,4 @@
-package cz.kralicekgamer.stravawidget.widget
+package cz.kralicekgamer.strava_cz_widget.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -34,9 +34,9 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import cz.kralicekgamer.stravawidget.data.MenuRepository
-import cz.kralicekgamer.stravawidget.data.WidgetContent
-import cz.kralicekgamer.stravawidget.ui.MainActivity
+import cz.kralicekgamer.strava_cz_widget.data.MenuRepository
+import cz.kralicekgamer.strava_cz_widget.data.WidgetContent
+import cz.kralicekgamer.strava_cz_widget.ui.MainActivity
 
 class StravaWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact

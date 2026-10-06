@@ -1,9 +1,9 @@
-package cz.kralicekgamer.stravawidget
+package cz.kralicekgamer.strava_cz_widget
 
-import cz.kralicekgamer.stravawidget.api.MenuParser
-import cz.kralicekgamer.stravawidget.api.StravaClient
-import cz.kralicekgamer.stravawidget.api.StravaException
-import cz.kralicekgamer.stravawidget.data.DayPicker
+import cz.kralicekgamer.strava_cz_widget.api.MenuParser
+import cz.kralicekgamer.strava_cz_widget.api.StravaClient
+import cz.kralicekgamer.strava_cz_widget.api.StravaException
+import cz.kralicekgamer.strava_cz_widget.data.DayPicker
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
